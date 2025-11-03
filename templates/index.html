@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>TasBoard</title>
+</head>
+
+<body>
+    <h1>TaskBoard</h1>
+  {% if session.username %}
+  <p>
+    Olet kirjautunut nimellä {{ session.username }}
+    </p>
+  {% endif %}
+  <p>
+    <a href="/login">Kirjaudu</a> | <a href="/register">Rekisteröidy</a>
+  </p>
+</body>
+
+</html>
