@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Luo uusi tehtävä</title>
+</head>
+
+<body>
+    <h1>Luo uusi tehtävä</h1>
+  <form action="/create_task" method="post">
+    <p>
+      Otsikko: <br />
+      <input type="text" name="title" />
+    </p>
+    <p>
+      Kuvaus: <br />
+      <textarea name="description" rows="8" cols="60"></textarea>
+    </p>
+    <p>
+        Tärkeys: <br />
+        <select name="priority">
+            <option value="low">Matala</option>
+            <option value="medium">Keskitaso</option>
+            <option value="high">Korkea</option>
+        </select>     
+    </p>
+    <p>
+        Määräaika: <br />
+        <input type="date" name="due_date" />
+    </p>
+    <input type="submit" value="Luo tehtävä" />
+  </form>
+</body>
+
+</html>
