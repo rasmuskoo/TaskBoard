@@ -1,0 +1,20 @@
+import db
+
+def add_task(title, description, priority, due_date, user_id):
+    sql = """INSERT INTO tasks (title, description, priority, due_date, user_id)
+             VALUES (?, ?, ?, ?, ?)"""
+    db.execute(sql, [title, description, priority, due_date, user_id])
+
+def get_tasks():
+    sql = "SELECT id, title FROM tasks ORDER BY id DESC"
+    return db.query(sql)
+
+def get_task(task_id):
+    sql = """SELECT tasks.title,
+                    tasks.description,
+                    tasks.priority,
+                    tasks.due_date,
+                    users.username
+             FROM tasks, users
+             WHERE tasks.user_id = users.id AND tasks.id = ?"""
+    return db.query(sql, [task_id])[0]

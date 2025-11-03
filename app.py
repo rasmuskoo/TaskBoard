@@ -4,13 +4,20 @@ from flask import redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
+import tasks
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    tasks.get_tasks()
+    return render_template("index.html", tasks=tasks.get_tasks())
+
+@app.route("/task/<int:task_id>")
+def show_task(task_id):
+    task = tasks.get_task(task_id)
+    return render_template("show_task.html", task=task)
 
 @app.route("/new_task")
 def new_task():
@@ -24,9 +31,7 @@ def create_task():
     due_date = request.form["due_date"]
     user_id = session.get("user_id")
 
-    sql = """INSERT INTO tasks (title, description, priority, due_date, user_id)
-             VALUES (?, ?, ?, ?, ?)"""
-    db.execute(sql, [title, description, priority, due_date, user_id])
+    tasks.add_task(title, description, priority, due_date, user_id)
 
     return redirect("/")
 

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>TasBoard</title>
+  <title>TaskBoard</title>
 </head>
 
 <body>
@@ -18,6 +18,21 @@
   <p>
     <a href="/new_task">Luo uusi tehtävä</a>
   </p>
+
+  <h2>Avoimet tehtävät</h2>
+
+  <ul>
+    {% for task in tasks %}
+    <li><a href="/task/{{ task.id }}">{{ task.title }} </a></li>
+    {% endfor %}
+    </ul>
+
+  <h2>Valmiit tehtävät </h2>
+    <ul>
+        {% for task in completed_tasks %}
+        <li><a href="/task/{{ task.id }}">{{ task.title }} </a></li>
+        {% endfor %}
+        </ul>
 </body>
 
 </html>
