@@ -49,3 +49,11 @@ def mark_task_completed(task_id):
 def mark_task_pending(task_id):
     sql = "UPDATE tasks SET status = 'pending' WHERE id = ?"
     db.execute(sql, [task_id])
+
+def find_tasks(query):
+    sql = """SELECT id, title
+             FROM tasks
+             WHERE title LIKE ? OR description LIKE ?
+             ORDER BY id DESC"""
+    like = "%" + query + "%"
+    return db.query(sql, [like, like])

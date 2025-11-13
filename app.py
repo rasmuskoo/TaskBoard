@@ -20,6 +20,16 @@ def show_task(task_id):
     task = tasks.get_task(task_id)
     return render_template("show_task.html", task=task)
 
+@app.route("/find_task")
+def find_task():
+    query = request.args.get("query")
+    if query:
+        results = tasks.find_tasks(query)
+    else:
+        query = ""
+        results = []
+    return render_template("find_task.html", query=query, results=results)
+
 @app.route("/new_task")
 def new_task():
     if "user_id" not in session:

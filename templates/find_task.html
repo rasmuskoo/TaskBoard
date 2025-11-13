@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Etsi tehtävistä</title>
+</head>
+
+<body>
+  <h1>Hae tehtävistä</h1>
+  <form action="/find_task" method="get" >
+    <p>
+        🔎: <input type="text" name="query" value="{{ query }}"> <input type="submit" value="Hae">
+    </p>
+    <p>
+    <a href="/">Takaisin</a>
+    </p>
+  </form>
+
+  {% if query %}
+  <h2>Hakutulokset</h2>
+  <ul>
+    {% for task in results %}
+    <li><a href="/task/{{ task.id }}">{{ task.title }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</body>
+
+</html>
