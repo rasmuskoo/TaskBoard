@@ -25,30 +25,29 @@
 
 - Install the Flask library:
   
-  $ pip install flask
+      $ pip install flask
 
 - Clone repository:
 
-  ```bash
-  git clone https://github.com/rasmuskoo/taskboard.git
-  cd taskboard
+      git clone https://github.com/rasmuskoo/taskboard.git
+      cd taskboard
 
 - Create virtual environment:
 
-  python3 -m venv venv
-  source venv/bin/activate on macOS / Linux
-  venv\Scripts\activate on Windows
+      python3 -m venv venv
+      source venv/bin/activate
+      venv\Scripts\activate
   
 - Install requirements:
 
-  pip install -r requirements.txt
+      pip install -r requirements.txt
   
 - Create the database tables and add initial data:
   
-  $ sqlite3 database.db < schema.sql
-  $ sqlite3 database.db < init.sql
+      $ sqlite3 database.db < schema.sql
+      $ sqlite3 database.db < init.sql
   
 - You can start the application with:
   
-  $ flask run
+      $ flask run
 
