@@ -6,18 +6,20 @@
 </head>
 
 <body>
-    <h1>TaskBoard</h1>
+  <h1>TaskBoard</h1>
   {% if session.username %}
+  <p>Hei {{ session.username }}!</p>
   <p>
-    Olet kirjautunut nimellä {{ session.username }}
-    </p>
+  <a href="/profile">Profiili</a> | <a href="/logout">Kirjaudu ulos</a>
+  </p>
+  <p>
+  <a href="/new_task">Luo uusi tehtävä</a>
+  </p>
+  {% else %}
+  <p>
+  <a href="/login">Kirjaudu</a> | <a href="/register">Rekisteröidy</a>
+  </p>
   {% endif %}
-  <p>
-    <a href="/login">Kirjaudu</a> | <a href="/register">Rekisteröidy</a>
-  </p>
-  <p>
-    <a href="/new_task">Luo uusi tehtävä</a>
-  </p>
 
   <h2>Avoimet</h2>
   <p>Avoimet: {{ tasks | length }}</p>

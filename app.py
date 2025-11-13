@@ -22,6 +22,8 @@ def show_task(task_id):
 
 @app.route("/new_task")
 def new_task():
+    if "user_id" not in session:
+        return redirect("/login")
     return render_template("new_task.html")
 
 @app.route("/create_task", methods=["POST"])
@@ -111,7 +113,8 @@ def create():
     except sqlite3.IntegrityError:
         return "VIRHE: tunnus on jo olemassa"
 
-    return "Tunnus luotu onnistuneesti"
+    #return "Tunnus luotu onnistuneesti" #Alkuperäinen vastaus tunnuksen luomisen jälkeen, loi kuitenkin ongelman miten käyttäjä pääsi etusivulle
+    return redirect("/login")  #Uusi vastaus, ohjaa käyttäjän kirjautumissivulle, mutta onnistumisviesti puuttuu
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -139,3 +142,12 @@ def logout():
     del session["user_id"]
     del session["username"]
     return redirect("/")
+
+@app.route("/profile")
+def profile():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    user_id = session["user_id"]
+    username = session["username"]
+    return render_template("profile.html", user_id=user_id, username=username)
