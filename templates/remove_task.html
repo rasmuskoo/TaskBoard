@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Tehtävän poisto</title>
+</head>
+
+<body>
+  <h1>Poista tehtävä</h1>
+  <p>Ilmoitus: {{ task.title }}</p>
+  <p>Haluatko varmasti poistaa tämän tehtävän?</p>
+  <form action="/remove_task/{{ task.id }}" method="post">
+    <input type="submit" name="remove" value="Poista tehtävä" />
+    <input type="submit" name="cancel" value="Peruuta" />
+  </form>
+</body>
+
+</html>

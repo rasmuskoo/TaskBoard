@@ -28,3 +28,7 @@ def update_task(task_id, title, description, priority, due_date):
                               due_date = ?
                           WHERE id = ?"""
     db.execute(sql, [title, description, priority, due_date, task_id])
+
+def remove_task(task_id):
+    sql = "DELETE FROM tasks WHERE id = ?"
+    db.execute(sql, [task_id])

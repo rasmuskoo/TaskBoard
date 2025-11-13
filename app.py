@@ -52,6 +52,19 @@ def update_task():
 
     return redirect("/task/" + str(task_id))
 
+@app.route("/remove_task/<int:task_id>", methods=["GET", "POST"])
+def remove_task(task_id):
+    if request.method == "GET":
+        task = tasks.get_task(task_id)
+        return render_template("remove_task.html", task=task)
+    
+    if request.method == "POST":
+        if "remove" in request.form:
+            tasks.remove_task(task_id)
+            return redirect("/")
+        else:
+            return redirect("/task/" + str(task_id))
+
 @app.route("/register")
 def register():
     return render_template("register.html")
