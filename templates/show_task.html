@@ -7,9 +7,13 @@
 
 <body>
     <h1>{{ task.title }}</h1>
+    {% if session.user_id == task.user_id %}
+    <p><a href="/edit_task/{{ task.id }}">Muokkaa tehtävää</a></p>
+    {% endif %}
     <p><strong>Kuvaus:</strong> {{ task.description }}</p>
     <p><strong>Tärkeys:</strong> {{ task.priority }}</p>
     <p><strong>Määräaika:</strong> {{ task.due_date }}</p>
+    <p><a href="/">Takaisin</a></p>
 </body>
 
 </html>

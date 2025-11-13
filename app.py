@@ -35,6 +35,23 @@ def create_task():
 
     return redirect("/")
 
+@app.route("/edit_task/<int:task_id>")
+def edit_task(task_id):
+    task = tasks.get_task(task_id)
+    return render_template("edit_task.html", task=task)
+
+@app.route("/update_task", methods=["POST"])
+def update_task():
+    task_id = request.form["task_id"]
+    title = request.form["title"]
+    description = request.form["description"]
+    priority = request.form["priority"]
+    due_date = request.form["due_date"]
+
+    tasks.update_task(task_id, title, description, priority, due_date)
+
+    return redirect("/task/" + str(task_id))
+
 @app.route("/register")
 def register():
     return render_template("register.html")

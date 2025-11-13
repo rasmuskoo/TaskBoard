@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Tehtävän muokkaus</title>
+</head>
+
+<body>
+    <h1>Muokkaa tehtävää</h1>
+  <form action="/update_task" method="post">
+    <p>
+      Otsikko: <br />
+      <input type="text" name="title" value="{{ task.title}}" />
+    </p>
+    <p>
+      Kuvaus: <br />
+      <textarea name="description" rows="8" cols="60">{{ task.description }}</textarea>
+    </p>
+    <p>
+      Tärkeys: <br />
+      <select name="priority">
+          <option value="low" {% if task.priority == "low" %}selected{% endif %}>Matala</option>
+          <option value="medium" {% if task.priority == "medium" %}selected{% endif %}>Keskitaso</option>
+          <option value="high" {% if task.priority == "high" %}selected{% endif %}>Korkea</option>
+      </select>
+    </p>
+        <p>
+        Määräaika: <br />
+        <input type="date" name="due_date" value="{{ task.due_date}}" />
+    </p>
+    <input type="hidden" name="task_id" value="{{ task.id }}" />
+    <input type="submit" value="Päivitä tehtävää" />
+  </form>
+</body>
+
+</html>

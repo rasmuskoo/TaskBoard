@@ -10,11 +10,21 @@ def get_tasks():
     return db.query(sql)
 
 def get_task(task_id):
-    sql = """SELECT tasks.title,
+    sql = """SELECT tasks.id,
+                    tasks.title,
                     tasks.description,
                     tasks.priority,
                     tasks.due_date,
+                    users.id user_id,
                     users.username
              FROM tasks, users
              WHERE tasks.user_id = users.id AND tasks.id = ?"""
     return db.query(sql, [task_id])[0]
+
+def update_task(task_id, title, description, priority, due_date):
+    sql = """UPDATE tasks SET title = ?,
+                              description = ?,
+                              priority = ?,
+                              due_date = ?
+                          WHERE id = ?"""
+    db.execute(sql, [title, description, priority, due_date, task_id])
