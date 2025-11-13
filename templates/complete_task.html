@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Merkitse tehtävä suoritetuksi</title>
+</head>
+
+<body>
+  <h1>Merkitse tehtävä suoritetuksi</h1>
+  <p>Ilmoitus: {{ task.title }}</p>
+  <p>Haluatko varmasti merkitä tämän tehtävän suoritetuksi?</p>
+
+  <form action="/complete_task/{{ task.id }}" method="post">
+    <input type="submit" name="complete" value="Merkitse suoritetuksi" />
+    <input type="submit" name="cancel" value="Peruuta" />
+  </form>
+</body>
+
+</html>

@@ -11,8 +11,9 @@ app.secret_key = config.secret_key
 
 @app.route("/")
 def index():
-    tasks.get_tasks()
-    return render_template("index.html", tasks=tasks.get_tasks())
+    open_tasks = tasks.get_pending_tasks()
+    done_tasks = tasks.get_completed_tasks()
+    return render_template("index.html", tasks=open_tasks, completed_tasks=done_tasks)
 
 @app.route("/task/<int:task_id>")
 def show_task(task_id):
@@ -61,6 +62,32 @@ def remove_task(task_id):
     if request.method == "POST":
         if "remove" in request.form:
             tasks.remove_task(task_id)
+            return redirect("/")
+        else:
+            return redirect("/task/" + str(task_id))
+        
+@app.route("/complete_task/<int:task_id>", methods=["GET", "POST"])
+def complete_task(task_id):
+    if request.method == "GET":
+        task = tasks.get_task(task_id)
+        return render_template("complete_task.html", task=task)
+    
+    if request.method == "POST":
+        if "complete" in request.form:
+            tasks.mark_task_completed(task_id)
+            return redirect("/")
+        else:
+            return redirect("/task/" + str(task_id))
+
+@app.route("/uncomplete_task/<int:task_id>", methods=["GET", "POST"])
+def uncomplete_task(task_id):
+    if request.method == "GET":
+        task = tasks.get_task(task_id)
+        return render_template("uncomplete_task.html", task=task)
+    
+    if request.method == "POST":
+        if "uncomplete" in request.form:
+            tasks.mark_task_pending(task_id)
             return redirect("/")
         else:
             return redirect("/task/" + str(task_id))

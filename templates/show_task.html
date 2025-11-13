@@ -12,7 +12,15 @@
     <p><strong>Määräaika:</strong> {{ task.due_date }}</p>
     <p><a href="/">Takaisin</a></p>
     {% if session.user_id == task.user_id %}
-    <p><a href="/edit_task/{{ task.id }}">Muokkaa tehtävää</a> | <a href="/remove_task/{{ task.id }}">Poista tehtävä</a></p>
+      <p>
+        {% if task.status == "pending" %}
+          <a href="/complete_task/{{ task.id }}">Merkitse suoritetuksi</a>
+        {% elif task.status == "completed" %}
+          <a href="/uncomplete_task/{{ task.id }}">Palauta avoimeksi</a>
+        {% endif %}
+        | <a href="/edit_task/{{ task.id }}">Muokkaa tehtävää</a>
+        | <a href="/remove_task/{{ task.id }}">Poista tehtävä</a>
+      </p>
     {% endif %}
 </body>
 

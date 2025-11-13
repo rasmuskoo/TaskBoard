@@ -11,6 +11,7 @@ def get_tasks():
 
 def get_task(task_id):
     sql = """SELECT tasks.id,
+                    tasks.status,
                     tasks.title,
                     tasks.description,
                     tasks.priority,
@@ -31,4 +32,20 @@ def update_task(task_id, title, description, priority, due_date):
 
 def remove_task(task_id):
     sql = "DELETE FROM tasks WHERE id = ?"
+    db.execute(sql, [task_id])
+
+def get_pending_tasks():
+    sql = "SELECT id, title FROM tasks WHERE status = 'pending' ORDER BY id DESC"
+    return db.query(sql)
+
+def get_completed_tasks():
+    sql = "SELECT id, title FROM tasks WHERE status = 'completed' ORDER BY id DESC"
+    return db.query(sql)
+
+def mark_task_completed(task_id):
+    sql = "UPDATE tasks SET status = 'completed' WHERE id = ?"
+    db.execute(sql, [task_id])
+
+def mark_task_pending(task_id):
+    sql = "UPDATE tasks SET status = 'pending' WHERE id = ?"
     db.execute(sql, [task_id])

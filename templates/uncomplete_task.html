@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Palauta tehtävä avoimeksi</title>
+</head>
+
+<body>
+  <h1>Palauta tehtävä avoimeksi</h1>
+  <p>Ilmoitus: {{ task.title }}</p>
+  <p>Haluatko varmasti palauttaa tämän tehtävän avoimeksi?</p>
+
+  <form action="/uncomplete_task/{{ task.id }}" method="post">
+    <input type="submit" name="uncomplete" value="Palauta avoimeksi" />
+    <input type="submit" name="cancel" value="Peruuta" />
+  </form>
+</body>
+
+</html>
