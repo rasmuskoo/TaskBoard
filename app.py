@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import abort, redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
@@ -34,6 +34,7 @@ def find_task():
 def new_task():
     if "user_id" not in session:
         return redirect("/login")
+
     return render_template("new_task.html")
 
 @app.route("/create_task", methods=["POST"])
@@ -51,11 +52,16 @@ def create_task():
 @app.route("/edit_task/<int:task_id>")
 def edit_task(task_id):
     task = tasks.get_task(task_id)
+    if task["user_id"] != session["user_id"]:
+        abort(403)
     return render_template("edit_task.html", task=task)
 
 @app.route("/update_task", methods=["POST"])
 def update_task():
     task_id = request.form["task_id"]
+    task = tasks.get_task(task_id)
+    if task["user_id"] != session["user_id"]:
+        abort(403)
     title = request.form["title"]
     description = request.form["description"]
     priority = request.form["priority"]
@@ -67,23 +73,26 @@ def update_task():
 
 @app.route("/remove_task/<int:task_id>", methods=["GET", "POST"])
 def remove_task(task_id):
+    task = tasks.get_task(task_id)
+    if task["user_id"] != session["user_id"]:
+        abort(403)
+
     if request.method == "GET":
-        task = tasks.get_task(task_id)
         return render_template("remove_task.html", task=task)
-    
+
     if request.method == "POST":
         if "remove" in request.form:
             tasks.remove_task(task_id)
             return redirect("/")
         else:
             return redirect("/task/" + str(task_id))
-        
+
 @app.route("/complete_task/<int:task_id>", methods=["GET", "POST"])
 def complete_task(task_id):
     if request.method == "GET":
         task = tasks.get_task(task_id)
         return render_template("complete_task.html", task=task)
-    
+
     if request.method == "POST":
         if "complete" in request.form:
             tasks.mark_task_completed(task_id)
@@ -96,7 +105,7 @@ def uncomplete_task(task_id):
     if request.method == "GET":
         task = tasks.get_task(task_id)
         return render_template("uncomplete_task.html", task=task)
-    
+
     if request.method == "POST":
         if "uncomplete" in request.form:
             tasks.mark_task_pending(task_id)
