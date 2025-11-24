@@ -1,10 +1,11 @@
 import sqlite3
 from flask import Flask
-from flask import abort, redirect, render_template, request, session
+from flask import flash, abort, redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
 import tasks
+from datetime import date, datetime
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -40,15 +41,26 @@ def find_task():
 def new_task():
     if "user_id" not in session:
         return redirect("/login")
-    return render_template("new_task.html")
+    return render_template("new_task.html", current_date=date.today().isoformat())
 
 @app.route("/create_task", methods=["POST"])
 def create_task():
     require_login()
     title = request.form["title"]
+    if len(title) > 50:
+        return "VIRHE: otsikko saa olla enintään 50 merkkiä pitkä"
     description = request.form["description"]
+    if len(description) > 1000:
+        return "VIRHE: kuvaus saa olla enintään 1000 merkkiä pitkä"
     priority = request.form["priority"]
-    due_date = request.form["due_date"]
+    due_date = request.form.get("due_date")
+    if not due_date:
+        flash("Määräaika puuttuu.")
+        return redirect("/new_task")
+    due = datetime.strptime(due_date, "%Y-%m-%d").date()
+    if due < date.today():
+        flash("Määräaika ei voi olla menneisyydessä.")
+        return redirect("/new_task")
     user_id = session.get("user_id")
 
     tasks.add_task(title, description, priority, due_date, user_id)
@@ -63,7 +75,7 @@ def edit_task(task_id):
         abort(404)
     if task["user_id"] != session["user_id"]:
         abort(403)
-    return render_template("edit_task.html", task=task)
+    return render_template("edit_task.html", task=task, current_date=date.today().isoformat())
 
 @app.route("/update_task", methods=["POST"])
 def update_task():
@@ -77,7 +89,14 @@ def update_task():
     title = request.form["title"]
     description = request.form["description"]
     priority = request.form["priority"]
-    due_date = request.form["due_date"]
+    due_date = request.form.get("due_date")
+    if not due_date:
+        flash("Määräaika puuttuu.")
+        return redirect(f"/edit_task/{task_id}")
+    due = datetime.strptime(due_date, "%Y-%m-%d").date()
+    if due < date.today():
+        flash("Määräaika ei voi olla menneisyydessä.")
+        return redirect(f"/edit_task/{task_id}")
 
     tasks.update_task(task_id, title, description, priority, due_date)
 

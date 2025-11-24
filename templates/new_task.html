@@ -10,11 +10,11 @@
   <form action="/create_task" method="post">
     <p>
       Otsikko: <br />
-      <input type="text" name="title" />
+      <input type="text" name="title" maxlength="50" />
     </p>
     <p>
       Kuvaus: <br />
-      <textarea name="description" rows="8" cols="60"></textarea>
+      <textarea name="description" rows="8" cols="60" maxlength="1000"></textarea>
     </p>
     <p>
         Tärkeys: <br />
@@ -26,7 +26,7 @@
     </p>
     <p>
         Määräaika: <br />
-        <input type="date" name="due_date" />
+        <input type="date" name="due_date" min="{{ current_date }}" />
     </p>
     <input type="submit" value="Luo tehtävä" /> <a href="/">Takaisin</a>
   </form>

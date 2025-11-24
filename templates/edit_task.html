@@ -26,7 +26,7 @@
     </p>
         <p>
         Määräaika: <br />
-        <input type="date" name="due_date" value="{{ task.due_date}}" />
+        <input type="date" name="due_date" value="{{ task.due_date}}" min="{{ current_date }}" />
     </p>
     <input type="hidden" name="task_id" value="{{ task.id }}" />
     <input type="submit" value="Päivitä tehtävää" />
