@@ -47,10 +47,10 @@ def new_task():
 def create_task():
     require_login()
     title = request.form["title"]
-    if len(title) > 50:
+    if not title or len(title) > 50:
         return "VIRHE: otsikko saa olla enintään 50 merkkiä pitkä"
     description = request.form["description"]
-    if len(description) > 1000:
+    if not description or len(description) > 1000:
         return "VIRHE: kuvaus saa olla enintään 1000 merkkiä pitkä"
     priority = request.form["priority"]
     due_date = request.form.get("due_date")
@@ -87,7 +87,11 @@ def update_task():
     if task["user_id"] != session["user_id"]:
         abort(403)
     title = request.form["title"]
+    if not title or len(title) > 50:
+        return "VIRHE: otsikko saa olla enintään 50 merkkiä pitkä"
     description = request.form["description"]
+    if not description or len(description) > 1000:
+        return "VIRHE: kuvaus saa olla enintään 1000 merkkiä pitkä"
     priority = request.form["priority"]
     due_date = request.form.get("due_date")
     if not due_date:

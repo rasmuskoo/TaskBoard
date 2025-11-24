@@ -10,11 +10,11 @@
   <form action="/update_task" method="post">
     <p>
       Otsikko: <br />
-      <input type="text" name="title" value="{{ task.title}}" />
+      <input type="text" name="title" value="{{ task.title }}" maxlength="50" required />
     </p>
     <p>
       Kuvaus: <br />
-      <textarea name="description" rows="8" cols="60">{{ task.description }}</textarea>
+      <textarea name="description" rows="8" cols="60" maxlength="1000" required >{{ task.description }}</textarea>
     </p>
     <p>
       Tärkeys: <br />
