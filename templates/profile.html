@@ -2,13 +2,17 @@
 <html>
 
 <head>
-  <title>Käyttäjäprofiili</title>
+  <title>Käyttäjätili</title>
 </head>
 
 <body>
-  <h1>Profiili</h1>
-  <p>Käyttäjänimi: {{ username }}</p>
-  <p>Käyttäjä-ID: {{ user_id }}</p>
+  <h1>{{ user.username }}</h1>
+  <h2>Tehtävät ({{ tasks | count }})</h2>
+  <ul>
+    {% for task in tasks %}
+    <li><a href="/task/{{ task.id }}">{{ task.title }} </a></li>
+    {% endfor %}
+  </ul>
   <p><a href="/">Takaisin</a></p>
 </body>
 

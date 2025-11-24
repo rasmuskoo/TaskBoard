@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import config
 import db
 import tasks
+import users
 from datetime import date, datetime
 
 app = Flask(__name__)
@@ -199,11 +200,20 @@ def logout():
         del session["username"]
     return redirect("/")
 
-@app.route("/profile")
-def profile():
+@app.route("/my_page")
+def my_page():
     if "user_id" not in session:
         return redirect("/login")
 
     user_id = session["user_id"]
     username = session["username"]
-    return render_template("profile.html", user_id=user_id, username=username)
+    return render_template("my_page.html", user_id=user_id, username=username)
+
+@app.route("/profile/<int:user_id>")
+def profile(user_id):
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    open_tasks = users.get_pending_tasks(user_id)
+    done_tasks = users.get_completed_tasks(user_id)
+    return render_template("profile.html", user=user, tasks=open_tasks, completed_tasks=done_tasks)

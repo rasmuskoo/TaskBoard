@@ -7,6 +7,7 @@
 
 <body>
     <h1>{{ task.title }}</h1>
+    <p>Tehtävän on luonut: <a href="/profile/{{ task.user_id }}">{{ task.username }}</a></p>
     <p><strong>Kuvaus:</strong> {{ task.description }}</p>
     <p><strong>Tärkeys:</strong> {{ task.priority }}</p>
     <p><strong>Määräaika:</strong> {{ task.due_date }}</p>
