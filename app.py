@@ -9,6 +9,10 @@ import tasks
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
+def require_login():
+    if "user_id" not in session:
+        abort(403)
+
 @app.route("/")
 def index():
     open_tasks = tasks.get_pending_tasks()
@@ -36,11 +40,11 @@ def find_task():
 def new_task():
     if "user_id" not in session:
         return redirect("/login")
-
     return render_template("new_task.html")
 
 @app.route("/create_task", methods=["POST"])
 def create_task():
+    require_login()
     title = request.form["title"]
     description = request.form["description"]
     priority = request.form["priority"]
@@ -53,6 +57,7 @@ def create_task():
 
 @app.route("/edit_task/<int:task_id>")
 def edit_task(task_id):
+    require_login()
     task = tasks.get_task(task_id)
     if not task:
         abort(404)
@@ -62,6 +67,7 @@ def edit_task(task_id):
 
 @app.route("/update_task", methods=["POST"])
 def update_task():
+    require_login()
     task_id = request.form["task_id"]
     task = tasks.get_task(task_id)
     if not task:
@@ -79,6 +85,7 @@ def update_task():
 
 @app.route("/remove_task/<int:task_id>", methods=["GET", "POST"])
 def remove_task(task_id):
+    require_login()
     task = tasks.get_task(task_id)
     if not task:
         abort(404)
@@ -164,8 +171,9 @@ def login():
 
 @app.route("/logout")
 def logout():
-    del session["user_id"]
-    del session["username"]
+    if "user_id" in session:
+        del session["user_id"]
+        del session["username"]
     return redirect("/")
 
 @app.route("/profile")
