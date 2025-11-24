@@ -20,7 +20,8 @@ def get_task(task_id):
                     users.username
              FROM tasks, users
              WHERE tasks.user_id = users.id AND tasks.id = ?"""
-    return db.query(sql, [task_id])[0]
+    result =  db.query(sql, [task_id])
+    return result[0] if result else None
 
 def update_task(task_id, title, description, priority, due_date):
     sql = """UPDATE tasks SET title = ?,

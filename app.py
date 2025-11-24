@@ -18,6 +18,8 @@ def index():
 @app.route("/task/<int:task_id>")
 def show_task(task_id):
     task = tasks.get_task(task_id)
+    if not task:
+        abort(404)
     return render_template("show_task.html", task=task)
 
 @app.route("/find_task")
@@ -52,6 +54,8 @@ def create_task():
 @app.route("/edit_task/<int:task_id>")
 def edit_task(task_id):
     task = tasks.get_task(task_id)
+    if not task:
+        abort(404)
     if task["user_id"] != session["user_id"]:
         abort(403)
     return render_template("edit_task.html", task=task)
@@ -60,6 +64,8 @@ def edit_task(task_id):
 def update_task():
     task_id = request.form["task_id"]
     task = tasks.get_task(task_id)
+    if not task:
+        abort(404)
     if task["user_id"] != session["user_id"]:
         abort(403)
     title = request.form["title"]
@@ -74,12 +80,12 @@ def update_task():
 @app.route("/remove_task/<int:task_id>", methods=["GET", "POST"])
 def remove_task(task_id):
     task = tasks.get_task(task_id)
+    if not task:
+        abort(404)
     if task["user_id"] != session["user_id"]:
         abort(403)
-
     if request.method == "GET":
         return render_template("remove_task.html", task=task)
-
     if request.method == "POST":
         if "remove" in request.form:
             tasks.remove_task(task_id)
