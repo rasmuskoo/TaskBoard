@@ -58,3 +58,28 @@ def find_tasks(query):
              ORDER BY id DESC"""
     like = "%" + query + "%"
     return db.query(sql, [like, like])
+
+def add_progress(task_id, user_id, content):
+    sql = "INSERT INTO progress (task_id, user_id, content) VALUES (?,?,?)"
+    db.execute(sql, (task_id, user_id, content))
+
+def get_progress(task_id):
+    sql = """SELECT p.id, p.task_id, p.user_id, p.content, p.created_at, u.username
+             FROM progress p
+             JOIN users u ON u.id = p.user_id
+             WHERE p.task_id = ?
+             ORDER BY p.created_at DESC"""
+    return db.query(sql, (task_id,))
+
+def get_one(progress_id):
+    sql = "SELECT * FROM progress WHERE id = ?"
+    rows = db.query(sql, (progress_id,))
+    return rows[0] if rows else None
+
+def update_progress(progress_id, content):
+    sql = "UPDATE progress SET content = ? WHERE id = ?"
+    db.execute(sql, (content, progress_id))
+
+def delete_progress(progress_id):
+    sql = "DELETE FROM progress WHERE id = ?"
+    db.execute(sql, (progress_id,))

@@ -25,7 +25,8 @@ def show_task(task_id):
     task = tasks.get_task(task_id)
     if not task:
         abort(404)
-    return render_template("show_task.html", task=task)
+    progress_list = tasks.get_progress(task_id)
+    return render_template("show_task.html", task=task, progress_list=progress_list)
 
 @app.route("/find_task")
 def find_task():
@@ -149,6 +150,52 @@ def uncomplete_task(task_id):
         else:
             return redirect("/task/" + str(task_id))
 
+@app.route("/add_progress/<int:task_id>", methods=["POST"])
+def add_progress(task_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    content = request.form["content"]
+    if not content.strip():
+        return redirect(f"/task/{task_id}")
+
+    tasks.add_progress(task_id, session["user_id"], content)
+    return redirect(f"/task/{task_id}")
+
+@app.route("/delete_progress/<int:progress_id>", methods=["POST"])
+def delete_progress_route(progress_id):
+    pr = tasks.get_one(progress_id)
+    if not pr:
+        abort(404)
+    if pr["user_id"] != session.get("user_id"):
+        abort(403)
+    tasks.delete_progress(progress_id)
+    return redirect(f"/task/{pr['task_id']}")
+
+@app.route("/edit_progress/<int:progress_id>")
+def edit_progress(progress_id):
+    pr = tasks.get_one(progress_id)
+    if not pr:
+        abort(404)
+
+    if pr["user_id"] != session.get("user_id"):
+        abort(403)
+
+    return render_template("edit_progress.html", pr=pr)
+
+@app.route("/edit_progress/<int:progress_id>", methods=["POST"])
+def update_progress_route(progress_id):
+    pr = tasks.get_one(progress_id)
+    if not pr:
+        abort(404)
+
+    if pr["user_id"] != session.get("user_id"):
+        abort(403)
+
+    content = request.form["content"]
+    tasks.update_progress(progress_id, content)
+    return redirect(f"/task/{pr['task_id']}")
+
 @app.route("/register")
 def register():
     return render_template("register.html")
@@ -181,7 +228,7 @@ def login():
         user_id = users.check_login(username, password)
 
         if user_id:
-            session["user_id"] = user_id
+            session["user_id"] = int(user_id)
             session["username"] = username
             return redirect("/")
         else:

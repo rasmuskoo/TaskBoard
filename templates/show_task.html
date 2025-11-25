@@ -11,6 +11,29 @@
     <p><strong>Kuvaus:</strong> {{ task.description }}</p>
     <p><strong>Tärkeys:</strong> {{ task.priority }}</p>
     <p><strong>Määräaika:</strong> {{ task.due_date }}</p>
+    <h3>Tehtävän edistyminen</h3>
+    <ul>
+    {% for p in progress_list %}
+    <li>
+    <strong>{{ p.username }}:</strong> {{ p.content }}
+    <br>
+    <small>{{ p.created_at }}</small>
+    {% if session.user_id and p.user_id == session.user_id|int %}
+        <form action="/delete_progress/{{ p.id }}" method="post" style="display:inline;">
+            <button type="submit">Poista</button>
+        </form>
+        <a href="/edit_progress/{{ p.id }}">Muokkaa</a>
+    {% endif %}
+    </li>
+
+    {% endfor %}
+    </ul>
+    {% if session.user_id %}
+    <form action="/add_progress/{{ task.id }}" method="post">
+    <textarea name="content" rows="3" cols="40" placeholder="Lisää edistymismerkintä..."></textarea><br>
+    <button type="submit">Lisää merkintä</button>
+    </form>
+    {% endif %}
     <p><a href="/">Takaisin</a></p>
     {% if session.user_id == task.user_id %}
       <p>

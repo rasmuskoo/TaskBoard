@@ -8,7 +8,7 @@ def create_user(username, password):
 
 def check_login(username, password):
     sql = "SELECT id, password_hash FROM users WHERE username = ?"
-    result = db.query(sql, [username])[0]
+    result = db.query(sql, [username])
     if not result:
         return None
     user_id = result[0]["id"]
