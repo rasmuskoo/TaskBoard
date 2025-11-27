@@ -5,12 +5,13 @@
 </head>
 <body>
     <h1>Muokkaa edistysmerkintää</h1>
-
     <form method="post">
-        <textarea name="content" rows="5" cols="50">{{ pr.content }}</textarea><br>
-        <button type="submit">Tallenna</button>
+        <p>
+            <textarea name="content" rows="5" cols="50" required >{{ pr.content }}</textarea><br>
+        </p>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <button type="submit">Päivitä merkintä</button>
     </form>
-
     <p><a href="/task/{{ pr.task_id }}">Takaisin</a></p>
 </body>
 </html>

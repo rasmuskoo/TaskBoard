@@ -11,6 +11,7 @@
   <p>Haluatko varmasti merkitä tämän tehtävän suoritetuksi?</p>
 
   <form action="/complete_task/{{ task.id }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" name="complete" value="Merkitse suoritetuksi" />
     <input type="submit" name="cancel" value="Peruuta" />
   </form>

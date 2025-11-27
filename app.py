@@ -6,9 +6,16 @@ import db
 import tasks
 import users
 from datetime import date, datetime
+import secrets
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+def check_csrf():
+    if "csrf_token" not in request.form:
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
 
 def require_login():
     if "user_id" not in session:
@@ -47,6 +54,7 @@ def new_task():
 @app.route("/create_task", methods=["POST"])
 def create_task():
     require_login()
+    check_csrf()
     title = request.form["title"]
     if not title or len(title) > 50:
         return "VIRHE: otsikko saa olla enintään 50 merkkiä pitkä"
@@ -81,6 +89,7 @@ def edit_task(task_id):
 @app.route("/update_task", methods=["POST"])
 def update_task():
     require_login()
+    check_csrf()
     task_id = request.form["task_id"]
     task = tasks.get_task(task_id)
     if not task:
@@ -118,6 +127,7 @@ def remove_task(task_id):
     if request.method == "GET":
         return render_template("remove_task.html", task=task)
     if request.method == "POST":
+        check_csrf()
         if "remove" in request.form:
             tasks.remove_task(task_id)
             return redirect("/")
@@ -131,6 +141,7 @@ def complete_task(task_id):
         return render_template("complete_task.html", task=task)
 
     if request.method == "POST":
+        check_csrf()
         if "complete" in request.form:
             tasks.mark_task_completed(task_id)
             return redirect("/")
@@ -144,6 +155,7 @@ def uncomplete_task(task_id):
         return render_template("uncomplete_task.html", task=task)
 
     if request.method == "POST":
+        check_csrf()
         if "uncomplete" in request.form:
             tasks.mark_task_pending(task_id)
             return redirect("/")
@@ -152,6 +164,7 @@ def uncomplete_task(task_id):
 
 @app.route("/add_progress/<int:task_id>", methods=["POST"])
 def add_progress(task_id):
+    check_csrf()
     if "user_id" not in session:
         return redirect("/login")
 
@@ -164,6 +177,7 @@ def add_progress(task_id):
 
 @app.route("/delete_progress/<int:progress_id>", methods=["POST"])
 def delete_progress_route(progress_id):
+    check_csrf()
     pr = tasks.get_one(progress_id)
     if not pr:
         abort(404)
@@ -185,6 +199,7 @@ def edit_progress(progress_id):
 
 @app.route("/edit_progress/<int:progress_id>", methods=["POST"])
 def update_progress_route(progress_id):
+    check_csrf()
     pr = tasks.get_one(progress_id)
     if not pr:
         abort(404)
@@ -230,6 +245,7 @@ def login():
         if user_id:
             session["user_id"] = int(user_id)
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             return "VIRHE: väärä tunnus tai salasana"
@@ -248,7 +264,9 @@ def my_page():
 
     user_id = session["user_id"]
     username = session["username"]
-    return render_template("my_page.html", user_id=user_id, username=username)
+    open_tasks = users.get_pending_tasks(user_id)
+    done_tasks = users.get_completed_tasks(user_id)
+    return render_template("my_page.html", user_id=user_id, username=username, tasks=open_tasks, completed_tasks=done_tasks)
 
 @app.route("/profile/<int:user_id>")
 def profile(user_id):

@@ -28,6 +28,7 @@
         Määräaika: <br />
         <input type="date" name="due_date" min="{{ current_date }}" />
     </p>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Luo tehtävä" /> <a href="/">Takaisin</a>
   </form>
 </body>

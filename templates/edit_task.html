@@ -4,7 +4,6 @@
 <head>
   <title>Tehtävän muokkaus</title>
 </head>
-
 <body>
     <h1>Muokkaa tehtävää</h1>
   <form action="/update_task" method="post">
@@ -29,6 +28,7 @@
         <input type="date" name="due_date" value="{{ task.due_date}}" min="{{ current_date }}" />
     </p>
     <input type="hidden" name="task_id" value="{{ task.id }}" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Päivitä tehtävää" />
     <p><a href="/task/{{ task.id }}">Takaisin</a></p>
   </form>

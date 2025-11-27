@@ -20,7 +20,8 @@
     <small>{{ p.created_at }}</small>
     {% if session.user_id and p.user_id == session.user_id|int %}
         <form action="/delete_progress/{{ p.id }}" method="post" style="display:inline;">
-            <button type="submit">Poista</button>
+          <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+          <button type="submit">Poista</button>
         </form>
         <a href="/edit_progress/{{ p.id }}">Muokkaa</a>
     {% endif %}
@@ -31,6 +32,7 @@
     {% if session.user_id %}
     <form action="/add_progress/{{ task.id }}" method="post">
     <textarea name="content" rows="3" cols="40" placeholder="Lisää edistymismerkintä..."></textarea><br>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <button type="submit">Lisää merkintä</button>
     </form>
     {% endif %}
