@@ -28,13 +28,30 @@
         </div>
     </header>
     <main class="container">
-        {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
-        <div class="flash_messages">
-            {% for message in messages %}
-            <p>{{ message }}</p>
+        <div class="flash_messages" role="status" aria-live="polite">
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category or 'info' }}">
+                <p>{{ message }}</p>
+            </div>
             {% endfor %}
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                document.querySelectorAll(".flash-message").forEach(function (message) {
+                    var hide = function () {
+                        if (!message.classList.contains("flash-hidden")) {
+                            message.classList.add("flash-hidden");
+                            setTimeout(function () {
+                                message.remove();
+                            }, 250);
+                        }
+                    };
+                    setTimeout(hide, 3000);
+                });
+            });
+        </script>
         {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}

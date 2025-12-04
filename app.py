@@ -57,21 +57,24 @@ def create_task():
     check_csrf()
     title = request.form["title"]
     if not title or len(title) > 50:
-        return "VIRHE: otsikko saa olla enintään 50 merkkiä pitkä"
+        flash("Otsikko saa olla enintään 50 merkkiä pitkä.", "error")
+        return redirect("/new_task")
     description = request.form["description"]
     if not description or len(description) > 1000:
-        return "VIRHE: kuvaus saa olla enintään 1000 merkkiä pitkä"
+        flash("Kuvaus saa olla enintään 1000 merkkiä pitkä.", "error")
+        return redirect("/new_task")
     priority = request.form["priority"]
     due_date = request.form.get("due_date")
     if not due_date:
-        flash("Määräaika puuttuu.")
+        flash("Määräaika puuttuu.", "error")
         return redirect("/new_task")
     due = datetime.strptime(due_date, "%Y-%m-%d").date()
     if due < date.today():
-        flash("Määräaika ei voi olla menneisyydessä.")
+        flash("Määräaika ei voi olla menneisyydessä.", "error")
         return redirect("/new_task")
     user_id = session.get("user_id")
     tasks.add_task(title, description, priority, due_date, user_id)
+    flash("Tehtävä luotu onnistuneesti.", "success")
     return redirect("/")
 
 @app.route("/edit_task/<int:task_id>")
@@ -96,20 +99,23 @@ def update_task():
         abort(403)
     title = request.form["title"]
     if not title or len(title) > 50:
-        return "VIRHE: otsikko saa olla enintään 50 merkkiä pitkä"
+        flash("Otsikko saa olla enintään 50 merkkiä pitkä.", "error")
+        return redirect(f"/edit_task/{task_id}")
     description = request.form["description"]
     if not description or len(description) > 1000:
-        return "VIRHE: kuvaus saa olla enintään 1000 merkkiä pitkä"
+        flash("Kuvaus saa olla enintään 1000 merkkiä pitkä.", "error")
+        return redirect(f"/edit_task/{task_id}")
     priority = request.form["priority"]
     due_date = request.form.get("due_date")
     if not due_date:
-        flash("Määräaika puuttuu.")
+        flash("Määräaika puuttuu.", "error")
         return redirect(f"/edit_task/{task_id}")
     due = datetime.strptime(due_date, "%Y-%m-%d").date()
     if due < date.today():
-        flash("Määräaika ei voi olla menneisyydessä.")
+        flash("Määräaika ei voi olla menneisyydessä.", "error")
         return redirect(f"/edit_task/{task_id}")
     tasks.update_task(task_id, title, description, priority, due_date)
+    flash("Tehtävä päivitetty.", "success")
     return redirect("/task/" + str(task_id))
 
 @app.route("/remove_task/<int:task_id>", methods=["GET", "POST"])
@@ -126,6 +132,7 @@ def remove_task(task_id):
         check_csrf()
         if "remove" in request.form:
             tasks.remove_task(task_id)
+            flash("Tehtävä poistettu.", "success")
             return redirect("/")
         else:
             return redirect("/task/" + str(task_id))
@@ -140,6 +147,7 @@ def complete_task(task_id):
         check_csrf()
         if "complete" in request.form:
             tasks.mark_task_completed(task_id)
+            flash("Tehtävä merkitty suoritetuksi.", "success")
             return redirect("/")
         else:
             return redirect("/task/" + str(task_id))
@@ -154,6 +162,7 @@ def uncomplete_task(task_id):
         check_csrf()
         if "uncomplete" in request.form:
             tasks.mark_task_pending(task_id)
+            flash("Tehtävä palautettu avoimeksi.", "success")
             return redirect("/")
         else:
             return redirect("/task/" + str(task_id))
@@ -165,8 +174,10 @@ def add_progress(task_id):
         return redirect("/login")
     content = request.form["content"]
     if not content.strip():
+        flash("Merkintä ei voi olla tyhjä.", "error")
         return redirect(f"/task/{task_id}")
     tasks.add_progress(task_id, session["user_id"], content)
+    flash("Merkintä lisätty.", "success")
     return redirect(f"/task/{task_id}")
 
 @app.route("/delete_progress/<int:progress_id>", methods=["POST"])
@@ -178,6 +189,7 @@ def delete_progress_route(progress_id):
     if pr["user_id"] != session.get("user_id"):
         abort(403)
     tasks.delete_progress(progress_id)
+    flash("Merkintä poistettu.", "success")
     return redirect(f"/task/{pr['task_id']}")
 
 @app.route("/edit_progress/<int:progress_id>")
@@ -200,8 +212,10 @@ def update_progress_route(progress_id):
 
     content = request.form["content"]
     if not content or len(content) > 500:
-        return "VIRHE: kommentti saa olla enintään 500 merkkiä pitkä"
+        flash("Kommentti saa olla enintään 500 merkkiä pitkä.", "error")
+        return redirect(f"/edit_progress/{progress_id}")
     tasks.update_progress(progress_id, content)
+    flash("Merkintä päivitetty.", "success")
     return redirect(f"/task/{pr['task_id']}")
 
 @app.route("/register")
@@ -214,13 +228,15 @@ def create():
     password1 = request.form["password1"]
     password2 = request.form["password2"]
     if password1 != password2:
-        return "VIRHE: salasanat eivät täsmää"
+        flash("Salasanat eivät täsmää.", "error")
+        return redirect("/register")
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo olemassa"
-    #return "Tunnus luotu onnistuneesti" #Alkuperäinen vastaus tunnuksen luomisen jälkeen, loi kuitenkin ongelman miten käyttäjä pääsi etusivulle
-    return redirect("/login")  #Uusi vastaus, ohjaa käyttäjän kirjautumissivulle, mutta onnistumisviesti puuttuu
+        flash("Tunnus on jo olemassa.", "error")
+        return redirect("/register")
+    flash("Käyttäjätunnus on luotu onnistuneesti.", "success")
+    return redirect("/login")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -234,15 +250,18 @@ def login():
             session["user_id"] = int(user_id)
             session["username"] = username
             session["csrf_token"] = secrets.token_hex(16)
+            flash("Kirjautuminen onnistui.", "success")
             return redirect("/")
         else:
-            return "VIRHE: väärä tunnus tai salasana"
+            flash("Väärä tunnus tai salasana.", "error")
+            return redirect("/login")
 
 @app.route("/logout")
 def logout():
     if "user_id" in session:
         del session["user_id"]
         del session["username"]
+        flash("Olet kirjautunut ulos.", "success")
     return redirect("/")
 
 @app.route("/my_page")
