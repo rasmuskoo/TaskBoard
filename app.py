@@ -222,21 +222,38 @@ def update_progress_route(progress_id):
 def register():
     return render_template("register.html")
 
-@app.route("/create", methods=["POST"])
+@app.route("/create", methods=["GET", "POST"])
 def create():
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
-    if password1 != password2:
-        flash("Salasanat eivät täsmää.", "error")
-        return redirect("/register")
-    try:
-        users.create_user(username, password1)
-    except sqlite3.IntegrityError:
-        flash("Tunnus on jo olemassa.", "error")
-        return redirect("/register")
-    flash("Käyttäjätunnus on luotu onnistuneesti.", "success")
-    return redirect("/login")
+    if request.method == "GET":
+        return render_template("register.html", filled={})
+    
+    if request.method == "POST":
+        username = request.form["username"]
+        if len(username) == 0 or len(username) > 16:
+            flash("Käyttäjätunnuksen sallittu pituus on 1-16 merkkiä", "error")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
+        
+        password1 = request.form["password1"]
+        password2 = request.form["password2"]
+        
+        if password1 != password2:
+            flash("Salasanat eivät täsmää.", "error")
+            filled = {"username": username}
+            return render_template ("register.html", filled=filled)
+        
+        if len(password1) < 8:
+            flash("Salasanan on oltava vähintään 8 merkkiä pitkä.")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
+        
+        if users.create_user(username, password1):
+            flash("Käyttäjätunnus on luotu onnistuneesti.", "success")
+            return redirect("/login")
+        else:
+            flash("Valitsemasi tunnus on jo varattu", "error")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

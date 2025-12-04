@@ -7,20 +7,20 @@
     <h1>Luo uusi tunnus</h1>
     <form action="/create" method="post" class="form-grid">
         <div>
-            <label for="username">Tunnus</label>
-            <input type="text" id="username" name="username" required>
+            <label for="username">Käyttäjätunnus</label>
+            <input type="text" id="username" name="username" value="{{ filled.username }}" maxlength="16" required>
         </div>
         <div>
             <label for="password1">Salasana</label>
-            <input type="password" id="password1" name="password1" required>
+            <input type="password" id="password1" name="password1" minlength="8" required>
         </div>
         <div>
-            <label for="password2">Salasana uudestaan</label>
+            <label for="password2">Salasana uudelleen</label>
             <input type="password" id="password2" name="password2" required>
         </div>
         <div class="form-actions">
             <input type="submit" value="Luo tunnus">
-            <a href="/login" class="button ghost">Minulla on jo tunnus</a>
+            <a href="/login" class="button ghost">Minulla on jo käyttäjä</a>
             <a href="/" class="button ghost">Takaisin etusivulle</a>
         </div>
     </form>
