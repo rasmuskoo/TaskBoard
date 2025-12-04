@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %}Kirjaudu ulos - TaskBoard{% endblock %}
+{% block content %}
+<section class="page-card">
+  <h1>Kirjaudu ulos</h1>
+  <p>Haluatko varmasti kirjautua ulos?</p>
+  <form action="/logout" method="post" class="form-actions">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <input type="submit" value="Kirjaudu ulos">
+    <a href="/" class="button ghost">Peruuta</a>
+  </form>
+</section>
+{% endblock %}

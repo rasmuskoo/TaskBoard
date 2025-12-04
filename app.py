@@ -258,11 +258,20 @@ def create():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        return render_template("login.html", filled={})
+    
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        filled = {"username": username}
+
+        if not username or not password:
+            flash("Kirjoita käyttäjätunnus ja salasana.", "error")
+            filled = {"username": username}
+            return render_template("login.html", filled=filled)
+        
         user_id = users.check_login(username, password)
+
         if user_id:
             session["user_id"] = int(user_id)
             session["username"] = username
@@ -271,14 +280,22 @@ def login():
             return redirect("/")
         else:
             flash("Väärä tunnus tai salasana.", "error")
-            return redirect("/login")
+            filled = {"username": username}
+            return render_template("login.html", filled=filled)
 
-@app.route("/logout")
+@app.route("/logout", methods=["GET", "POST"])
 def logout():
-    if "user_id" in session:
-        del session["user_id"]
-        del session["username"]
-        flash("Olet kirjautunut ulos.", "success")
+    if "user_id" not in session:
+        return redirect("/")
+
+    if request.method == "GET":
+        return render_template("logout_confirmation.html")
+    
+    check_csrf()
+    session.pop("user_id", None)
+    session.pop("username", None)
+    session.pop("csrf_token", None)
+    flash("Olet kirjautunut ulos.", "success")
     return redirect("/")
 
 @app.route("/my_page")
