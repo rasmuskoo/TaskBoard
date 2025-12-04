@@ -141,6 +141,10 @@ a {
     color: #0f172a;
     font-weight: 500;
     transition: opacity 0.2s ease, transform 0.2s ease;
+    overflow: hidden;
+    max-height: 200px;
+    animation: flash-dismiss 0.35s ease forwards;
+    animation-delay: 3s;
 }
 
 .flash-message p {
@@ -165,9 +169,30 @@ a {
     border: 1px solid #bfdbfe;
 }
 
-.flash-hidden {
-    opacity: 0;
-    transform: translateY(-10px);
+@keyframes flash-dismiss {
+    0% {
+        opacity: 1;
+        max-height: 200px;
+    }
+    90% {
+        opacity: 1;
+        max-height: 200px;
+    }
+    100% {
+        opacity: 0;
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flash-message {
+        animation: none;
+        max-height: none;
+    }
 }
 
 .board {

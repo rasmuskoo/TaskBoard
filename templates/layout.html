@@ -37,21 +37,6 @@
             </div>
             {% endfor %}
         </div>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                document.querySelectorAll(".flash-message").forEach(function (message) {
-                    var hide = function () {
-                        if (!message.classList.contains("flash-hidden")) {
-                            message.classList.add("flash-hidden");
-                            setTimeout(function () {
-                                message.remove();
-                            }, 250);
-                        }
-                    };
-                    setTimeout(hide, 3000);
-                });
-            });
-        </script>
         {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
