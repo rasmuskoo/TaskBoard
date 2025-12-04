@@ -116,7 +116,7 @@ def update_task():
         return redirect(f"/edit_task/{task_id}")
     tasks.update_task(task_id, title, description, priority, due_date)
     flash("Tehtävä päivitetty.", "success")
-    return redirect("/task/" + str(task_id))
+    return redirect(f"/task/{task_id}")
 
 @app.route("/remove_task/<int:task_id>", methods=["GET", "POST"])
 def remove_task(task_id):
@@ -135,7 +135,7 @@ def remove_task(task_id):
             flash("Tehtävä poistettu.", "success")
             return redirect("/")
         else:
-            return redirect("/task/" + str(task_id))
+            return redirect(f"/task/{task_id}")
 
 @app.route("/complete_task/<int:task_id>", methods=["GET", "POST"])
 def complete_task(task_id):
@@ -150,7 +150,7 @@ def complete_task(task_id):
             flash("Tehtävä merkitty suoritetuksi.", "success")
             return redirect("/")
         else:
-            return redirect("/task/" + str(task_id))
+            return redirect(f"/task/{task_id}")
 
 @app.route("/uncomplete_task/<int:task_id>", methods=["GET", "POST"])
 def uncomplete_task(task_id):
@@ -165,7 +165,7 @@ def uncomplete_task(task_id):
             flash("Tehtävä palautettu avoimeksi.", "success")
             return redirect("/")
         else:
-            return redirect("/task/" + str(task_id))
+            return redirect(f"/task/{task_id}")
 
 @app.route("/add_progress/<int:task_id>", methods=["POST"])
 def add_progress(task_id):
