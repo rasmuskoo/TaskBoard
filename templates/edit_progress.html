@@ -1,17 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Muokkaa merkintää</title>
-</head>
-<body>
+{% extends "layout.html" %}
+
+{% block title %}Muokkaa merkintää - TaskBoard{% endblock %}
+
+{% block content %}
+<section class="page-card">
     <h1>Muokkaa edistysmerkintää</h1>
-    <form method="post">
-        <p>
-            <textarea name="content" rows="5" cols="50" required >{{ pr.content }}</textarea><br>
-        </p>
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-        <button type="submit">Päivitä merkintä</button>
+    <form method="post" class="form-grid">
+        <div>
+            <label for="content">Merkintä</label>
+            <textarea id="content" name="content" maxlength="500" required>{{ pr.content }}</textarea>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <div class="form-actions">
+            <button type="submit">Päivitä merkintä</button>
+            <a href="/task/{{ pr.task_id }}" class="button ghost">Peruuta</a>
+        </div>
     </form>
-    <p><a href="/task/{{ pr.task_id }}">Takaisin</a></p>
-</body>
-</html>
+</section>
+{% endblock %}

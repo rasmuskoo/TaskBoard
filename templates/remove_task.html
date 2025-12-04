@@ -1,19 +1,16 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Tehtävän poisto</title>
-</head>
+{% block title %}Poista tehtävä - TaskBoard{% endblock %}
 
-<body>
-  <h1>Poista tehtävä</h1>
-  <p>Ilmoitus: {{ task.title }}</p>
-  <p>Haluatko varmasti poistaa tämän tehtävän?</p>
-  <form action="/remove_task/{{ task.id }}" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" name="remove" value="Poista tehtävä" />
-    <input type="submit" name="cancel" value="Peruuta" />
-  </form>
-</body>
-
-</html>
+{% block content %}
+<section class="page-card">
+    <h1>Poista tehtävä</h1>
+    <p><strong>Tehtävä:</strong> {{ task.title }}</p>
+    <p>Haluatko varmasti poistaa tämän tehtävän?</p>
+    <form action="/remove_task/{{ task.id }}" method="post" class="form-actions">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <input type="submit" name="remove" value="Poista tehtävä">
+        <a href="/task/{{ task.id }}" class="button ghost">Peruuta</a>
+    </form>
+</section>
+{% endblock %}

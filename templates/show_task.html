@@ -1,53 +1,86 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
+{% set priority_labels = {"high": "Korkea", "medium": "Keskitaso", "low": "Matala"} %}
 
-<head>
-  <title>{{ task.title }}</title>
-</head>
+{% block title %}{{ task.title }} - TaskBoard{% endblock %}
 
-<body>
-    <h1>{{ task.title }}</h1>
-    <p>Tehtävän on luonut: <a href="/profile/{{ task.user_id }}">{{ task.username }}</a></p>
-    <p><strong>Kuvaus:</strong> {{ task.description }}</p>
-    <p><strong>Tärkeys:</strong> {{ task.priority }}</p>
-    <p><strong>Määräaika:</strong> {{ task.due_date }}</p>
-    <h3>Tehtävän edistyminen</h3>
-    <ul>
-    {% for p in progress_list %}
-    <li>
-    <strong>{{ p.username }}:</strong> {{ p.content }}
-    <br>
-    <small>{{ p.created_at }}</small>
-    {% if session.user_id and p.user_id == session.user_id|int %}
-        <form action="/delete_progress/{{ p.id }}" method="post" style="display:inline;">
-          <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-          <button type="submit">Poista</button>
-        </form>
-        <a href="/edit_progress/{{ p.id }}">Muokkaa</a>
+{% block content %}
+<section class="page-card">
+    <div class="task-header">
+        <h1>{{ task.title }}</h1>
+        <p>Tehtävän loi <a href="/profile/{{ task.user_id }}" class="link">{{ task.username }}</a></p>
+    </div>
+    <div class="task-attributes">
+        <div>
+            <span class="label">Tärkeys</span>
+            <span class="priority-tag priority-{{ task.priority or 'medium' }}">
+                {{ priority_labels.get(task.priority, task.priority|title) }}
+            </span>
+        </div>
+        <div>
+            <span class="label">Määräaika</span>
+            <span>{{ task.due_date }}</span>
+        </div>
+        <div>
+            <span class="label">Tila</span>
+            <span class="status-pill status-{{ task.status }}">{{ "Avoin" if task.status == "pending" else "Suoritettu" }}</span>
+        </div>
+    </div>
+    <p>{{ task.description }}</p>
+    {% if session.user_id == task.user_id %}
+    <div class="form-actions">
+        {% if task.status == "pending" %}
+        <a class="button primary" href="/complete_task/{{ task.id }}">Merkitse suoritetuksi</a>
+        {% else %}
+        <a class="button primary" href="/uncomplete_task/{{ task.id }}">Palauta avoimeksi</a>
+        {% endif %}
+        <a class="button ghost" href="/edit_task/{{ task.id }}">Muokkaa tehtävää</a>
+        <a class="button ghost" href="/remove_task/{{ task.id }}">Poista tehtävä</a>
+    </div>
     {% endif %}
-    </li>
+</section>
 
-    {% endfor %}
+<section class="page-card">
+    <h2>Tehtävän edistyminen</h2>
+    {% if progress_list %}
+    <ul class="list">
+        {% for p in progress_list %}
+        <li class="progress-item">
+            <div class="progress-body">
+                <strong>{{ p.username }}:</strong> {{ p.content }}
+                <div class="meta">{{ p.created_at }}</div>
+            </div>
+            {% if session.user_id and p.user_id == session.user_id|int %}
+            <div class="progress-actions">
+                <form action="/delete_progress/{{ p.id }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    <button type="submit">Poista</button>
+                </form>
+                <a href="/edit_progress/{{ p.id }}" class="button ghost">Muokkaa</a>
+            </div>
+            {% endif %}
+        </li>
+        {% endfor %}
     </ul>
+    {% else %}
+    <p>Ei edistymismerkintöjä vielä.</p>
+    {% endif %}
     {% if session.user_id %}
-    <form action="/add_progress/{{ task.id }}" method="post">
-    <textarea name="content" rows="3" cols="40" placeholder="Lisää edistymismerkintä..."></textarea><br>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <button type="submit">Lisää merkintä</button>
+    <form action="/add_progress/{{ task.id }}" method="post" class="form-grid" style="margin-top:1.5rem;">
+        <div>
+            <label for="content">Lisää merkintä</label>
+            <textarea id="content" name="content" rows="3" placeholder="Lisää edistymismerkintä..." required></textarea>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <div class="form-actions">
+            <button type="submit">Lisää merkintä</button>
+        </div>
     </form>
     {% endif %}
-    <p><a href="/">Takaisin</a></p>
-    {% if session.user_id == task.user_id %}
-      <p>
-        {% if task.status == "pending" %}
-          <a href="/complete_task/{{ task.id }}">Merkitse suoritetuksi</a>
-        {% elif task.status == "completed" %}
-          <a href="/uncomplete_task/{{ task.id }}">Palauta avoimeksi</a>
-        {% endif %}
-        | <a href="/edit_task/{{ task.id }}">Muokkaa tehtävää</a>
-        | <a href="/remove_task/{{ task.id }}">Poista tehtävä</a>
-      </p>
-    {% endif %}
-</body>
+</section>
 
-</html>
+<section class="page-card">
+    <div class="form-actions">
+        <a href="/" class="button ghost">Takaisin etusivulle</a>
+    </div>
+</section>
+{% endblock %}

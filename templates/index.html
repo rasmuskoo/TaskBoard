@@ -1,40 +1,74 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
+{% set priority_labels = {"high": "High Priority", "medium": "Medium Priority", "low": "Low Priority"} %}
 
-<head>
-  <title>TaskBoard</title>
-</head>
+{% block title %}TaskBoard{% endblock %}
 
-<body>
-  <h1>TaskBoard</h1>
-  {% if session.username %}
-  <p>
-  <a href="/my_page">Käyttäjätili</a> | <a href="/logout">Kirjaudu ulos</a>
-  </p>
-  <p>
-  <a href="/new_task">Luo uusi tehtävä</a> | <a href="/find_task">Hae tehtävistä</a>
-  </p>
-  {% else %}
-  <p>
-  <a href="/login">Kirjaudu</a> | <a href="/register">Rekisteröidy</a>
-  </p>
-  {% endif %}
-
-  <h2>Avoimet</h2>
-  <p>{{ tasks | length }} kesken</p>
-  <ul>
-    {% for task in tasks %}
-    <li><a href="/task/{{ task.id }}">{{ task.title }}</a></li>
-    {% endfor %}
-    </ul>
-
-  <h2>Suoritetut</h2>
-  <p>{{ completed_tasks | length }} suoritettua</p>
-  <ul>
-      {% for task in completed_tasks %}
-      <li><a href="/task/{{ task.id }}">{{ task.title }}</a></li>
-      {% endfor %}
-      </ul>
-</body>
-
-</html>
+{% block content %}
+{% if not session.user_id %}
+<section class="cta-card page-card">
+    <h2>Liity TaskBoardiin</h2>
+    <p>Kirjaudu sisään tai luo tunnus aloittaaksesi tehtävien hallinnan.</p>
+    <div class="form-actions">
+        <a href="/login" class="button primary">Kirjaudu Sisään</a>
+        <a href="/register" class="button ghost">Rekisteröidy</a>
+    </div>
+</section>
+{% endif %}
+<section class="board">
+    <div class="column">
+        <div class="column-header">
+            Avoimet
+            <span>{{ tasks | length }}</span>
+        </div>
+        <div class="task-list">
+            {% if tasks %}
+            {% for task in tasks %}
+            <article class="task-card">
+                <a href="/task/{{ task.id }}" class="task-title">{{ task.title }}</a>
+                <div class="task-meta">
+                    <span class="priority-tag priority-{{ task.priority or 'medium' }}">
+                        {{ priority_labels.get(task.priority, ((task.priority or "Normal") | title) ~ " Priority") }}
+                    </span>
+                    <span class="task-date">{{ task.due_date or "Ei määräaikaa" }}</span>
+                </div>
+            </article>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <p>Ei avoimia tehtäviä vielä.</p>
+            </div>
+            {% endif %}
+        </div>
+        {% if session.user_id %}
+        <div class="add-task">
+            <a href="/new_task" class="button primary">+ Lisää tehtävä</a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="column">
+        <div class="column-header">
+            Suoritetut
+            <span>{{ completed_tasks | length }}</span>
+        </div>
+        <div class="task-list">
+            {% if completed_tasks %}
+            {% for task in completed_tasks %}
+            <article class="task-card task-card--muted">
+                <a href="/task/{{ task.id }}" class="task-title">{{ task.title }}</a>
+                <div class="task-meta">
+                    <span class="priority-tag priority-{{ task.priority or 'medium' }}">
+                        {{ priority_labels.get(task.priority, ((task.priority or "Normal") | title) ~ " Priority") }}
+                    </span>
+                    <span class="task-date">{{ task.due_date or "Ei määräaikaa" }}</span>
+                </div>
+            </article>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <p>Ei suoritettuja tehtäviä vielä.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

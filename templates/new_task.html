@@ -1,36 +1,36 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Luo uusi tehtävä</title>
-</head>
+{% block title %}Luo uusi tehtävä - TaskBoard{% endblock %}
 
-<body>
+{% block content %}
+<section class="page-card">
     <h1>Luo uusi tehtävä</h1>
-  <form action="/create_task" method="post">
-    <p>
-      Otsikko: <br />
-      <input type="text" name="title" maxlength="50" required />
-    </p>
-    <p>
-      Kuvaus: <br />
-      <textarea name="description" rows="8" cols="60" maxlength="1000" required></textarea>
-    </p>
-    <p>
-        Tärkeys: <br />
-        <select name="priority">
-            <option value="low">Matala</option>
-            <option value="medium">Keskitaso</option>
-            <option value="high">Korkea</option>
-        </select>     
-    </p>
-    <p>
-        Määräaika: <br />
-        <input type="date" name="due_date" min="{{ current_date }}" />
-    </p>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" value="Luo tehtävä" /> <a href="/">Takaisin</a>
-  </form>
-</body>
-
-</html>
+    <form action="/create_task" method="post" class="form-grid">
+        <div>
+            <label for="title">Otsikko</label>
+            <input type="text" id="title" name="title" maxlength="50" required>
+        </div>
+        <div>
+            <label for="description">Kuvaus</label>
+            <textarea id="description" name="description" maxlength="1000" required></textarea>
+        </div>
+        <div>
+            <label for="priority">Tärkeys</label>
+            <select id="priority" name="priority">
+                <option value="low">Matala</option>
+                <option value="medium">Keskitaso</option>
+                <option value="high">Korkea</option>
+            </select>
+        </div>
+        <div>
+            <label for="due_date">Määräaika</label>
+            <input type="date" id="due_date" name="due_date" min="{{ current_date }}">
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <div class="form-actions">
+            <input type="submit" value="Luo tehtävä">
+            <a href="/" class="button ghost">Takaisin</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

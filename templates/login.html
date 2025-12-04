@@ -1,31 +1,32 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Kirjautuminen</title>
-</head>
+{% block title %}Kirjaudu sisään - TaskBoard{% endblock %}
 
-<body>
-  {% if session.username %}
-  <p>
-    Olet kirjautunut nimellä {{ session.username }}
-  </p>
-  <p>
-    <a href="/logout">Kirjaudu ulos</a>
-  </p>
-  {% else %}
-  <form action="/login" method="post">
-    <p>
-      Tunnus: <br />
-      <input type="text" name="username" />
-    </p>
-    <p>
-      Salasana: <br />
-      <input type="password" name="password" />
-    </p>
-    <input type="submit" value="Kirjaudu" />
-  </form>
-  {% endif %}
-</body>
-
-</html>
+{% block content %}
+<section class="page-card">
+    <h1>Kirjaudu sisään</h1>
+    {% if session.username %}
+    <p>Olet kirjautunut nimellä <strong>{{ session.username }}</strong>.</p>
+    <div class="form-actions">
+        <a href="/logout" class="button primary">Kirjaudu ulos</a>
+        <a href="/" class="button ghost">Takaisin etusivulle</a>
+    </div>
+    {% else %}
+    <form action="/login" method="post" class="form-grid">
+        <div>
+            <label for="username">Tunnus</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Salasana</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-actions">
+            <input type="submit" value="Kirjaudu">
+            <a href="/register" class="button ghost">Luo tunnus</a>
+            <a href="/" class="button ghost">Takaisin etusivulle</a>
+        </div>
+    </form>
+    {% endif %}
+</section>
+{% endblock %}

@@ -71,9 +71,7 @@ def create_task():
         flash("Määräaika ei voi olla menneisyydessä.")
         return redirect("/new_task")
     user_id = session.get("user_id")
-
     tasks.add_task(title, description, priority, due_date, user_id)
-
     return redirect("/")
 
 @app.route("/edit_task/<int:task_id>")
@@ -111,9 +109,7 @@ def update_task():
     if due < date.today():
         flash("Määräaika ei voi olla menneisyydessä.")
         return redirect(f"/edit_task/{task_id}")
-
     tasks.update_task(task_id, title, description, priority, due_date)
-
     return redirect("/task/" + str(task_id))
 
 @app.route("/remove_task/<int:task_id>", methods=["GET", "POST"])
@@ -167,11 +163,9 @@ def add_progress(task_id):
     check_csrf()
     if "user_id" not in session:
         return redirect("/login")
-
     content = request.form["content"]
     if not content.strip():
         return redirect(f"/task/{task_id}")
-
     tasks.add_progress(task_id, session["user_id"], content)
     return redirect(f"/task/{task_id}")
 
@@ -191,10 +185,8 @@ def edit_progress(progress_id):
     pr = tasks.get_one(progress_id)
     if not pr:
         abort(404)
-
     if pr["user_id"] != session.get("user_id"):
         abort(403)
-
     return render_template("edit_progress.html", pr=pr)
 
 @app.route("/edit_progress/<int:progress_id>", methods=["POST"])
@@ -203,11 +195,12 @@ def update_progress_route(progress_id):
     pr = tasks.get_one(progress_id)
     if not pr:
         abort(404)
-
     if pr["user_id"] != session.get("user_id"):
         abort(403)
 
     content = request.form["content"]
+    if not content or len(content) > 500:
+        return "VIRHE: kommentti saa olla enintään 500 merkkiä pitkä"
     tasks.update_progress(progress_id, content)
     return redirect(f"/task/{pr['task_id']}")
 
@@ -222,12 +215,10 @@ def create():
     password2 = request.form["password2"]
     if password1 != password2:
         return "VIRHE: salasanat eivät täsmää"
-
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
         return "VIRHE: tunnus on jo olemassa"
-
     #return "Tunnus luotu onnistuneesti" #Alkuperäinen vastaus tunnuksen luomisen jälkeen, loi kuitenkin ongelman miten käyttäjä pääsi etusivulle
     return redirect("/login")  #Uusi vastaus, ohjaa käyttäjän kirjautumissivulle, mutta onnistumisviesti puuttuu
 
@@ -235,13 +226,10 @@ def create():
 def login():
     if request.method == "GET":
         return render_template("login.html")
-
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-
         user_id = users.check_login(username, password)
-
         if user_id:
             session["user_id"] = int(user_id)
             session["username"] = username
@@ -261,7 +249,6 @@ def logout():
 def my_page():
     if "user_id" not in session:
         return redirect("/login")
-
     user_id = session["user_id"]
     username = session["username"]
     open_tasks = users.get_pending_tasks(user_id)

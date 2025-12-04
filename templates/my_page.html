@@ -1,27 +1,39 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Käyttäjätili</title>
-</head>
+{% block title %}Käyttäjätili - TaskBoard{% endblock %}
 
-<body>
-  <h1>Käyttäjätili</h1>
-  <p>Käyttäjänimi: {{ username }}</p>
-  <p>Käyttäjä-ID: {{ user_id }}</p>
-  <h2>Avoimet tehtävät ({{ tasks | count }})</h2>
-  <ul>
-    {% for task in tasks %}
-    <li><a href="/task/{{ task.id }}">{{ task.title }} </a></li>
-    {% endfor %}
-  </ul>
-  <h2>Suoritetut tehtävät ({{ completed_tasks | count }})</h2>
-  <ul>
-    {% for task in completed_tasks %}
-    <li><a href="/task/{{ task.id}}">{{ task.title }}</a></li>
-    {% endfor %}
-  </ul>
-  <p><a href="/">Takaisin</a></p>
-</body>
+{% block content %}
+<section class="page-card">
+    <h1>Käyttäjätili</h1>
+    <p><strong>Käyttäjänimi:</strong> {{ username }}</p>
+    <p><strong>ID:</strong> {{ user_id }}</p>
+</section>
 
-</html>
+<section class="page-card">
+    <h2>Avoimet tehtävät ({{ tasks | length }})</h2>
+    <ul class="list">
+        {% for task in tasks %}
+        <li><a class="link" href="/task/{{ task.id }}">{{ task.title }}</a></li>
+        {% else %}
+        <li>Ei avoimia tehtäviä.</li>
+        {% endfor %}
+    </ul>
+</section>
+
+<section class="page-card">
+    <h2>Suoritetut tehtävät ({{ completed_tasks | length }})</h2>
+    <ul class="list">
+        {% for task in completed_tasks %}
+        <li><a class="link" href="/task/{{ task.id }}">{{ task.title }}</a></li>
+        {% else %}
+        <li>Ei suoritettuja tehtäviä.</li>
+        {% endfor %}
+    </ul>
+</section>
+
+<section class="page-card">
+    <div class="form-actions">
+        <a href="/" class="button ghost">Takaisin etusivulle</a>
+    </div>
+</section>
+{% endblock %}

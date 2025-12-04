@@ -1,26 +1,28 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Rekisteröinti</title>
-</head>
+{% block title %}Luo tunnus - TaskBoard{% endblock %}
 
-<body>
-  <form action="/create" method="post">
-    <p>
-      Tunnus: <br />
-      <input type="text" name="username" />
-    </p>
-    <p>
-      Salasana: <br />
-      <input type="password" name="password1" />
-    </p>
-    <p>
-      Salasana uudestaan: <br />
-      <input type="password" name="password2" />
-    </p>
-    <input type="submit" value="Luo tunnus" />
-  </form>
-</body>
-
-</html>
+{% block content %}
+<section class="page-card">
+    <h1>Luo uusi tunnus</h1>
+    <form action="/create" method="post" class="form-grid">
+        <div>
+            <label for="username">Tunnus</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password1">Salasana</label>
+            <input type="password" id="password1" name="password1" required>
+        </div>
+        <div>
+            <label for="password2">Salasana uudestaan</label>
+            <input type="password" id="password2" name="password2" required>
+        </div>
+        <div class="form-actions">
+            <input type="submit" value="Luo tunnus">
+            <a href="/login" class="button ghost">Minulla on jo tunnus</a>
+            <a href="/" class="button ghost">Takaisin etusivulle</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

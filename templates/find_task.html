@@ -1,29 +1,32 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Etsi tehtävistä</title>
-</head>
+{% block title %}Hae tehtävistä - TaskBoard{% endblock %}
 
-<body>
-  <h1>Hae tehtävistä</h1>
-  <form action="/find_task" method="get" >
-    <p>
-        🔎: <input type="text" name="query" value="{{ query }}"> <input type="submit" value="Hae">
-    </p>
-    <p>
-    <a href="/">Takaisin</a>
-    </p>
-  </form>
+{% block content %}
+<section class="page-card">
+    <h1>Hae tehtävistä</h1>
+    <form action="/find_task" method="get" class="form-grid">
+        <div>
+            <label for="query">Hakusana</label>
+            <input type="text" id="query" name="query" value="{{ query }}">
+        </div>
+        <div class="form-actions">
+            <input type="submit" value="Hae">
+            <a href="/" class="button ghost">Takaisin</a>
+        </div>
+    </form>
+</section>
 
-  {% if query %}
-  <h2>Hakutulokset</h2>
-  <ul>
-    {% for task in results %}
-    <li><a href="/task/{{ task.id }}">{{ task.title }}</a></li>
-    {% endfor %}
-  </ul>
-  {% endif %}
-</body>
-
-</html>
+{% if query %}
+<section class="page-card">
+    <h2>Hakutulokset</h2>
+    <ul class="list">
+        {% for task in results %}
+        <li><a class="link" href="/task/{{ task.id }}">{{ task.title }}</a></li>
+        {% else %}
+        <li>Ei hakutuloksia.</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+{% endblock %}
