@@ -78,7 +78,9 @@ def get_progress(task_id):
     return db.query(sql, (task_id,))
 
 def get_one(progress_id):
-    sql = "SELECT * FROM progress WHERE id = ?"
+    sql = """SELECT id, task_id, user_id, content, created_at 
+             FROM progress 
+             WHERE id = ?"""
     rows = db.query(sql, (progress_id,))
     return rows[0] if rows else None
 
