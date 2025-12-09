@@ -164,8 +164,13 @@ def remove_task(task_id):
 
 @app.route("/complete_task/<int:task_id>", methods=["GET", "POST"])
 def complete_task(task_id):
+    require_login()
+    task = tasks.get_task(task_id)
+    if not task:
+        abort(404)
+    if task["user_id"] != session.get("user_id"):
+        abort(403)
     if request.method == "GET":
-        task = tasks.get_task(task_id)
         return render_template("complete_task.html", task=task)
 
     if request.method == "POST":
@@ -179,8 +184,13 @@ def complete_task(task_id):
 
 @app.route("/uncomplete_task/<int:task_id>", methods=["GET", "POST"])
 def uncomplete_task(task_id):
+    require_login()
+    task = tasks.get_task(task_id)
+    if not task:
+        abort(404)
+    if task["user_id"] != session.get("user_id"):
+        abort(403)
     if request.method == "GET":
-        task = tasks.get_task(task_id)
         return render_template("uncomplete_task.html", task=task)
 
     if request.method == "POST":
@@ -207,6 +217,7 @@ def add_progress(task_id):
 
 @app.route("/delete_progress/<int:progress_id>", methods=["POST"])
 def delete_progress_route(progress_id):
+    require_login()
     check_csrf()
     pr = tasks.get_one(progress_id)
     if not pr:
@@ -219,6 +230,7 @@ def delete_progress_route(progress_id):
 
 @app.route("/edit_progress/<int:progress_id>")
 def edit_progress(progress_id):
+    require_login()
     pr = tasks.get_one(progress_id)
     if not pr:
         abort(404)
@@ -228,6 +240,7 @@ def edit_progress(progress_id):
 
 @app.route("/edit_progress/<int:progress_id>", methods=["POST"])
 def update_progress_route(progress_id):
+    require_login()
     check_csrf()
     pr = tasks.get_one(progress_id)
     if not pr:
