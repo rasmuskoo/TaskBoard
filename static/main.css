@@ -272,6 +272,14 @@ a {
     color: #475569;
 }
 
+.task-due {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    align-items: flex-end;
+    text-align: right;
+}
+
 .priority-tag {
     padding: 0.22rem 0.65rem;
     border-radius: 999px;
@@ -308,6 +316,41 @@ a {
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: #94a3b8;
+}
+
+.task-date--due-soon {
+    color: #b45309;
+}
+
+.task-date--due-soon::before {
+    color: #f97316;
+}
+
+.task-date--overdue {
+    color: #b91c1c;
+}
+
+.task-date--overdue::before {
+    color: #dc2626;
+}
+
+.due-indicator {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    padding: 0.05rem 0.55rem;
+}
+
+.due-indicator--soon {
+    color: #9a3412;
+    background-color: #fef3c7;
+}
+
+.due-indicator--overdue {
+    color: #b91c1c;
+    background-color: #fee2e2;
 }
 
 .add-task {

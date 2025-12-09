@@ -21,10 +21,35 @@ def require_login():
     if "user_id" not in session:
         abort(403)
 
+def annotate_due_status(task_rows):
+    today = date.today()
+    annotated = []
+    for row in task_rows:
+        task = dict(row)
+        due_str = task.get("due_date")
+        status = "no-due"
+        days_remaining = None
+        if due_str:
+            try:
+                due_dt = datetime.strptime(due_str, "%Y-%m-%d").date()
+                days_remaining = (due_dt - today).days
+                if days_remaining < 0:
+                    status = "overdue"
+                elif days_remaining <= 3:
+                    status = "due-soon"
+                else:
+                    status = "normal"
+            except ValueError:
+                status = "unknown"
+        task["due_status"] = status
+        task["days_remaining"] = days_remaining
+        annotated.append(task)
+    return annotated
+
 @app.route("/")
 def index():
-    open_tasks = tasks.get_pending_tasks()
-    done_tasks = tasks.get_completed_tasks()
+    open_tasks = annotate_due_status(tasks.get_pending_tasks())
+    done_tasks = annotate_due_status(tasks.get_completed_tasks())
     return render_template("index.html", tasks=open_tasks, completed_tasks=done_tasks)
 
 @app.route("/task/<int:task_id>")

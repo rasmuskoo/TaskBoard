@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% set priority_labels = {"high": "High Priority", "medium": "Medium Priority", "low": "Low Priority"} %}
+{% set due_classes = {"overdue": " task-date--overdue", "due-soon": " task-date--due-soon"} %}
 
 {% block title %}TaskBoard{% endblock %}
 
@@ -29,7 +30,14 @@
                     <span class="priority-tag priority-{{ task.priority or 'medium' }}">
                         {{ priority_labels.get(task.priority, ((task.priority or "Normal") | title) ~ " Priority") }}
                     </span>
-                    <span class="task-date">{{ task.due_date or "Ei määräaikaa" }}</span>
+                    <div class="task-due">
+                        <span class="task-date{{ due_classes.get(task.due_status, '') }}">{{ task.due_date or "Ei määräaikaa" }}</span>
+                        {% if task.due_status == "overdue" %}
+                        <span class="due-indicator due-indicator--overdue">Myöhässä</span>
+                        {% elif task.due_status == "due-soon" %}
+                        <span class="due-indicator due-indicator--soon">Erääntyy pian</span>
+                        {% endif %}
+                    </div>
                 </div>
             </article>
             {% endfor %}
