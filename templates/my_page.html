@@ -32,6 +32,27 @@
 </section>
 
 <section class="page-card">
+    <h2>Merkinnät ({{ comments | length }})</h2>
+    {% if comments %}
+    <ul class="list">
+        {% for comment in comments %}
+        <li>
+            <div class="comment-entry">
+                <div class="comment-entry__header">
+                    <strong><a class="link" href="/task/{{ comment.task_id }}">{{ comment.task_title }}</a></strong>
+                    <span class="comment-meta">{{ comment.created_at }}</span>
+                </div>
+                <p class="text-prewrap">{{ comment.content }}</p>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Ei merkintöjä vielä.</p>
+    {% endif %}
+</section>
+
+<section class="page-card">
     <div class="form-actions">
         <a href="/" class="button ghost">Takaisin etusivulle</a>
     </div>

@@ -546,3 +546,32 @@ input[type="button"]:not(.button):hover {
     flex-direction: column;
     gap: 0.5rem;
 }
+
+.comment-entry {
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.comment-entry__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #475569;
+    flex-wrap: wrap;
+}
+
+.comment-meta {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.text-prewrap {
+    white-space: pre-wrap;
+}

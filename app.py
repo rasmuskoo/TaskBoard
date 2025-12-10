@@ -344,7 +344,13 @@ def my_page():
     username = session["username"]
     open_tasks = users.get_pending_tasks(user_id)
     done_tasks = users.get_completed_tasks(user_id)
-    return render_template("my_page.html", user_id=user_id, username=username, tasks=open_tasks, completed_tasks=done_tasks)
+    comments = users.get_user_comments(user_id)
+    return render_template("my_page.html",
+                           user_id=user_id,
+                           username=username,
+                           tasks=open_tasks,
+                           completed_tasks=done_tasks,
+                           comments=comments)
 
 @app.route("/profile/<int:user_id>")
 def profile(user_id):
@@ -353,4 +359,9 @@ def profile(user_id):
         abort(404)
     open_tasks = users.get_pending_tasks(user_id)
     done_tasks = users.get_completed_tasks(user_id)
-    return render_template("profile.html", user=user, tasks=open_tasks, completed_tasks=done_tasks)
+    comments = users.get_user_comments(user_id)
+    return render_template("profile.html",
+                           user=user,
+                           tasks=open_tasks,
+                           completed_tasks=done_tasks,
+                           comments=comments)

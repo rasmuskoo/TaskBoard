@@ -36,3 +36,15 @@ def get_completed_tasks(user_id):
              WHERE user_id = ? AND status = 'completed'
              ORDER BY DATE(due_date) DESC, id DESC"""
     return db.query(sql, [user_id])
+
+def get_user_comments(user_id):
+    sql = """SELECT p.id,
+                    p.content,
+                    p.created_at,
+                    p.task_id,
+                    t.title AS task_title
+             FROM progress p
+             JOIN tasks t ON t.id = p.task_id
+             WHERE p.user_id = ?
+             ORDER BY p.created_at DESC"""
+    return db.query(sql, [user_id])
