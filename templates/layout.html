@@ -11,12 +11,17 @@
         <a href="/" class="brand">
             <span class="brand-name">TaskBoard</span>
         </a>
-        <form class="search" action="/find_task" method="get">
-            <input type="text"
-                   name="query"
-                   value="{{ request.args.get('query', '') }}"
-                   placeholder="Etsi tehtävistä..."
-                   aria-label="Etsi tehtävistä">
+        <form class="search" action="/" method="get">
+            <div class="search-input-wrapper">
+                <input type="text"
+                       name="query"
+                       value="{{ request.args.get('query', '') }}"
+                       placeholder="Etsi tehtävistä..."
+                       aria-label="Etsi tehtävistä">
+                <button class="search-button" type="submit" aria-label="Hae">
+                    <span aria-hidden="true">🔍</span>
+                </button>
+            </div>
         </form>
         <div class="user-links">
             {% if session.username %}

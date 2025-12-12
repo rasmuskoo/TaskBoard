@@ -35,19 +35,27 @@ def remove_task(task_id):
     db.execute("DELETE FROM progress WHERE task_id = ?", [task_id])
     db.execute("DELETE FROM tasks WHERE id = ?", [task_id])
 
-def get_pending_tasks():
-    sql = """SELECT id, title, priority, due_date
-             FROM tasks
-             WHERE status = 'pending'
-             ORDER BY DATE(due_date) ASC, id DESC"""
-    return db.query(sql)
+def get_pending_tasks(search_query=None):
+    return _filter_tasks("pending", "DATE(due_date) ASC, id DESC", search_query)
 
-def get_completed_tasks():
-    sql = """SELECT id, title, priority, due_date
-             FROM tasks
-             WHERE status = 'completed'
-             ORDER BY DATE(due_date) DESC, id DESC"""
-    return db.query(sql)
+def get_completed_tasks(search_query=None):
+    return _filter_tasks("completed", "DATE(due_date) DESC, id DESC", search_query)
+
+def _filter_tasks(status, order_clause, search_query=None):
+    sql = [
+        "SELECT id, title, priority, due_date",
+        "FROM tasks",
+        "WHERE status = ?",
+    ]
+    params = [status]
+
+    if search_query:
+        like = f"%{search_query}%"
+        sql[-1] += " AND (title LIKE ? OR description LIKE ?)"
+        params.extend([like, like])
+
+    sql.append("ORDER BY " + order_clause)
+    return db.query("\n".join(sql), params)
 
 def mark_task_completed(task_id):
     sql = "UPDATE tasks SET status = 'completed' WHERE id = ?"

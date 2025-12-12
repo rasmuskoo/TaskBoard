@@ -48,11 +48,17 @@ a {
     margin: 0 2rem;
 }
 
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+}
+
 .search input {
     width: 100%;
     border: 1px solid #e2e8f0;
     border-radius: 999px;
-    padding: 0.65rem 1.1rem;
+    padding: 0.65rem 2.6rem 0.65rem 1.1rem;
     font-size: 0.95rem;
     background-color: #f8fafc;
 }
@@ -60,6 +66,30 @@ a {
 .search input:focus {
     outline: 2px solid #5b63f6;
     background-color: #fff;
+}
+
+.search-button {
+    position: absolute;
+    right: 0.35rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: #475569;
+    font-size: 1.05rem;
+    cursor: pointer;
+    padding: 0;
+}
+
+.search-button:hover,
+.search-button:focus {
+    color: #2563eb;
 }
 
 .user-links {

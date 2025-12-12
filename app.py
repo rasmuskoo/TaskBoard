@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import flash, abort, redirect, render_template, request, session
+from flask import flash, abort, redirect, render_template, request, session, url_for
 import config
 import db
 import tasks
@@ -48,8 +48,9 @@ def annotate_due_status(task_rows):
 
 @app.route("/")
 def index():
-    open_tasks = annotate_due_status(tasks.get_pending_tasks())
-    done_tasks = annotate_due_status(tasks.get_completed_tasks())
+    search_query = request.args.get("query", "").strip()
+    open_tasks = annotate_due_status(tasks.get_pending_tasks(search_query or None))
+    done_tasks = annotate_due_status(tasks.get_completed_tasks(search_query or None))
     return render_template("index.html", tasks=open_tasks, completed_tasks=done_tasks)
 
 @app.route("/task/<int:task_id>")
@@ -62,13 +63,11 @@ def show_task(task_id):
 
 @app.route("/find_task")
 def find_task():
-    query = request.args.get("query")
+    query = request.args.get("query", "").strip()
+    params = {}
     if query:
-        results = tasks.find_tasks(query)
-    else:
-        query = ""
-        results = []
-    return render_template("find_task.html", query=query, results=results)
+        params["query"] = query
+    return redirect(url_for("index", **params))
 
 @app.route("/new_task")
 def new_task():
