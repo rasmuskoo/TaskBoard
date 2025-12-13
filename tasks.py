@@ -48,12 +48,10 @@ def _filter_tasks(status, order_clause, search_query=None):
         "WHERE status = ?",
     ]
     params = [status]
-
     if search_query:
         like = f"%{search_query}%"
         sql[-1] += " AND (title LIKE ? OR description LIKE ?)"
         params.extend([like, like])
-
     sql.append("ORDER BY " + order_clause)
     return db.query("\n".join(sql), params)
 

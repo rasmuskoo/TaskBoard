@@ -15,7 +15,7 @@
 
 - The application includes user pages that display statistics and the tasks created by the user.
 
-- The user can assign one or more classifications to a task (e.g., category, due date, importance).
+- The user can assign importance and due-date to a task.
 
 - The user can contribute to listed tasks.
 

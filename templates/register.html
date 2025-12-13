@@ -6,6 +6,7 @@
 <section class="page-card">
     <h1>Luo uusi tunnus</h1>
     <form action="/create" method="post" class="form-grid">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <div>
             <label for="username">Käyttäjätunnus</label>
             <input type="text" id="username" name="username" value="{{ filled.username }}" maxlength="16" required>

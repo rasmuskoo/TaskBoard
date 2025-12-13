@@ -1,8 +1,6 @@
-import sqlite3
 from flask import Flask
 from flask import flash, abort, redirect, render_template, request, session, url_for
 import config
-import db
 import tasks
 import users
 from datetime import date, datetime
@@ -10,6 +8,11 @@ import secrets
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+@app.before_request
+def ensure_csrf_token():
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(16)
 
 def check_csrf():
     if "csrf_token" not in request.form:
@@ -55,6 +58,7 @@ def index():
 
 @app.route("/task/<int:task_id>")
 def show_task(task_id):
+    require_login()
     task = tasks.get_task(task_id)
     if not task:
         abort(404)
@@ -171,7 +175,6 @@ def complete_task(task_id):
         abort(403)
     if request.method == "GET":
         return render_template("complete_task.html", task=task)
-
     if request.method == "POST":
         check_csrf()
         if "complete" in request.form:
@@ -191,7 +194,6 @@ def uncomplete_task(task_id):
         abort(403)
     if request.method == "GET":
         return render_template("uncomplete_task.html", task=task)
-
     if request.method == "POST":
         check_csrf()
         if "uncomplete" in request.form:
@@ -257,33 +259,29 @@ def update_progress_route(progress_id):
 
 @app.route("/register")
 def register():
-    return render_template("register.html")
+    return render_template("register.html", filled={})
 
 @app.route("/create", methods=["GET", "POST"])
 def create():
     if request.method == "GET":
         return render_template("register.html", filled={})
-    
     if request.method == "POST":
+        check_csrf()
         username = request.form["username"]
         if len(username) == 0 or len(username) > 16:
             flash("Käyttäjätunnuksen sallittu pituus on 1-16 merkkiä", "error")
             filled = {"username": username}
             return render_template("register.html", filled=filled)
-        
         password1 = request.form["password1"]
         password2 = request.form["password2"]
-        
         if password1 != password2:
             flash("Salasanat eivät täsmää.", "error")
             filled = {"username": username}
             return render_template ("register.html", filled=filled)
-        
         if len(password1) < 8:
             flash("Salasanan on oltava vähintään 8 merkkiä pitkä.")
             filled = {"username": username}
             return render_template("register.html", filled=filled)
-        
         if users.create_user(username, password1):
             flash("Käyttäjätunnus on luotu onnistuneesti.", "success")
             return redirect("/login")
@@ -296,19 +294,16 @@ def create():
 def login():
     if request.method == "GET":
         return render_template("login.html", filled={})
-    
     if request.method == "POST":
+        check_csrf()
         username = request.form["username"]
         password = request.form["password"]
         filled = {"username": username}
-
         if not username or not password:
             flash("Kirjoita käyttäjätunnus ja salasana.", "error")
             filled = {"username": username}
-            return render_template("login.html", filled=filled)
-        
+            return render_template("login.html", filled=filled)      
         user_id = users.check_login(username, password)
-
         if user_id:
             session["user_id"] = int(user_id)
             session["username"] = username
@@ -324,10 +319,8 @@ def login():
 def logout():
     if "user_id" not in session:
         return redirect("/")
-
     if request.method == "GET":
-        return render_template("logout_confirmation.html")
-    
+        return render_template("logout_confirmation.html")   
     check_csrf()
     session.pop("user_id", None)
     session.pop("username", None)
@@ -353,6 +346,7 @@ def my_page():
 
 @app.route("/profile/<int:user_id>")
 def profile(user_id):
+    require_login()
     user = users.get_user(user_id)
     if not user:
         abort(404)

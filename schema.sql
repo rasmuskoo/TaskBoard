@@ -8,7 +8,7 @@ CREATE TABLE tasks (
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
-    priority INTEGER DEFAULT 0,
+    priority TEXT DEFAULT 'medium',
     due_date DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     status TEXT DEFAULT 'pending',
